@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import '../widgets/app_scaffold.dart';
+import 'package:go_router/go_router.dart';
+import '../Config/routes.dart';
+import '../Data/quiz_list.dart';
+import '../Widgets/quiz_card_widget.dart';
+import '../Widgets/app_scaffold.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,92 +12,47 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  final List _quizList = QuizData.initialQuizzes;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+
     return AppScaffold(
       appBar: AppBar(
         title: Text(
-          "AnimeVerse",
+          'Course Overview',
           style: TextStyle(
-            color: Colors.white,
+            color: textColor,
             fontWeight: FontWeight.w800,
-            fontSize: screenWidth * 0.075,
+            fontSize: screenWidth * 0.055,
           ),
         ),
-        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Search Bar
-            Padding(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(screenWidth * 0.075),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: screenWidth * 0.02,
-                      offset: Offset(0, screenHeight * 0.005),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "nama Quiz",
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.grey,
-                      size: screenWidth * 0.06,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.075),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.075),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.075),
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xFF0b395e),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.05,
-                      vertical: screenHeight * 0.015,
-                    ),
-                  ),
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    color: Colors.white,
-                  ),
-                ),
-
-              ),
-
-            ),
-            // GenreList(),
-            SizedBox(height: screenHeight * 0.03),
-            // const SoalView(),
-            SizedBox(height: screenHeight * 0.025),
-
-          ],
-        ),
+      body: ListView.builder(
+        padding: EdgeInsets.all(screenWidth * 0.04),
+        itemCount: _quizList.length,
+        itemBuilder: (context, index) {
+          final quiz = _quizList[index];
+          return QuizCardWidget(
+            title: quiz.title,
+            matakuliah: quiz.matakuliah,
+            imagePath: quiz.imagePath,
+            progress: quiz.progress,
+            onTap: () {
+              context.push(AppRoutes.quizDetail(quiz.id));
+            },
+          );
+        },
       ),
     );
-
   }
 }

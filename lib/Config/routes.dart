@@ -8,7 +8,7 @@ import '../Screens/forgot_password_screen.dart';
 import '../Screens/home_screen.dart';
 import '../Screens/history_screen.dart';
 import '../Screens/profile_screen.dart';
-// import '../screens/detail_screen.dart';
+import '../Screens/quiz_screen.dart';
 
 class AppRoutes {
   static const String signIn = '/signIn';
@@ -17,7 +17,7 @@ class AppRoutes {
   static const String home = '/Home';
   static const String history = '/History';
   static const String profile = '/Profile';
-  // static const String details = '/details';
+  static String quizDetail(String id) => '/quiz/$id';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,6 +38,13 @@ GoRouter createRouter() {
       GoRoute(
         path: AppRoutes.forgotPassword,
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/quiz/:id',
+        builder: (context, state) {
+          final quizId = state.pathParameters['id'] ?? '';
+          return QuizScreen(quizTitle: 'Kuis (ID: $quizId)');
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
