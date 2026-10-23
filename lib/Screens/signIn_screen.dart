@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Config/routes.dart';
+import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -11,25 +12,69 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  // Controller untuk mengambil teks input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // State untuk mengontrol visibilitas password
   bool _obscurePassword = true;
 
   @override
   void dispose() {
-    // Wajib dispose controller untuk mencegah memory leak
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loginUser() async {
+    final inputEmail = _emailController.text.trim();
+    final inputPassword = _passwordController.text.trim();
+
+    if (inputEmail.isEmpty || inputPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('mohon masukan Email dan Password terlebih dahulu!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final savedEmail = await UserService.getSavedEmail();
+    final savedPassword = await UserService.getSavedPassword();
+
+    if (savedEmail == null || savedPassword == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Akun anda tidak terdaftar'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (inputEmail == savedEmail && inputPassword == savedPassword) {
+      if (mounted) {
+        context.go(AppRoutes.home);
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email atau Password salah!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    final textColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
       body: LayoutBuilder(
@@ -46,17 +91,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     SizedBox(height: screenHeight * 0.1),
 
-                    // TODO: Add logo here
-
-                    SizedBox(height: screenHeight * 0.04),
-
-                    // Signin Title
                     Text(
                       'Selamat Datang Kembali!',
                       style: TextStyle(
                         fontSize: screenWidth * (isLargeScreen ? 0.06 : 0.1),
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: textColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -68,31 +108,21 @@ class _SignInScreenState extends State<SignInScreen> {
                       style: TextStyle(
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white70,
+                        color: textColor.withValues(alpha: 0.7),
                       ),
                       textAlign: TextAlign.center,
                     ),
 
                     SizedBox(height: screenHeight * 0.05),
 
-                    // Email TextField
+                    // Kotak input email
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          color: Colors.white70,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                          borderSide: BorderSide.none,
-                        ),
                         prefixIcon: Icon(
                           Icons.email,
-                          color: Colors.white70,
+                          color: textColor,
                           size: screenWidth * 0.06,
                         ),
                         contentPadding: EdgeInsets.symmetric(
@@ -102,32 +132,22 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       style: TextStyle(
                         fontSize: screenWidth * 0.04,
-                        color: Colors.white,
+                        color: textColor,
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
 
                     SizedBox(height: screenHeight * 0.02),
 
-                    // Password TextField dengan fitur Toggle Show/Hide
+                    // Kotak input password
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          color: Colors.white70,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                          borderSide: BorderSide.none,
-                        ),
                         prefixIcon: Icon(
                           Icons.lock_outline,
-                          color: Colors.white70,
+                          color: textColor,
                           size: screenWidth * 0.06,
                         ),
                         suffixIcon: IconButton(
@@ -135,7 +155,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             _obscurePassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: Colors.white70,
+                            color: textColor,
                             size: screenWidth * 0.06,
                           ),
                           onPressed: () {
@@ -151,13 +171,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       style: TextStyle(
                         fontSize: screenWidth * 0.04,
-                        color: Colors.white,
+                        color: textColor,
                       ),
                     ),
 
                     SizedBox(height: screenHeight * 0.01),
 
-                    // Forgot Password
+                    // Forgot Password link
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -169,32 +189,22 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                         onPressed: () {
-                          // TODO: Implement forgot password functionality
+                          context.go(AppRoutes.forgotPassword);
                         },
                       ),
                     ),
 
                     SizedBox(height: screenHeight * 0.03),
 
-                    // Sign In Button
+                    // Tombol Sign In
                     SizedBox(
                       width: double.infinity,
                       height: screenHeight * 0.075,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Contoh mengambil string sebelum '@' dari email controller
-                          String email = _emailController.text.trim();
-                          if (email.contains('@')) {
-                            String username = email.split('@')[0];
-                            print('Username login: $username');
-                          }
-
-                          // TODO: Implement sign in functionality
-                          // context.go(AppRoutes.home);
-                        },
+                        onPressed: _loginUser,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.withValues(alpha: 0.8),
-                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.green.withValues(alpha: 0.8),
+                          foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(screenWidth * 0.03),
                           ),
@@ -212,68 +222,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.03),
 
-                    // or continue with
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
-                          child: Text(
-                            'or',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.035,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: screenHeight * 0.03),
-
-                    // Sign in with Google
-                    SizedBox(
-                      width: double.infinity,
-                      height: screenHeight * 0.075,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // TODO: Implement Google sign in functionality
-                        },
-                        label: Text(
-                          'Continue with Google',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black45,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                            side: const BorderSide(
-                              color: Colors.black45,
-                              width: 1,
-                            ),
-                          ),
-                          elevation: 3,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: screenHeight * 0.04),
-
                     // Sign up link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -282,7 +230,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           "Don't have an account? ",
                           style: TextStyle(
                             fontSize: screenWidth * 0.04,
-                            color: Colors.white70,
+                            color: textColor,
                           ),
                         ),
                         TextButton(
