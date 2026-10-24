@@ -38,7 +38,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void _answerQuestion(int selectedIndex) {
     setState(() {
       _selectedAnswerIndex = selectedIndex;
-      _userAnswers[_currentIndex] = selectedIndex; // Simpan jawaban pengguna
+      _userAnswers[_currentIndex] = selectedIndex;
     });
   }
 
@@ -183,14 +183,12 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Pertanyaan
             Text(
               currentQuestion.questionText,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
             ),
             const SizedBox(height: 24),
 
-            // Pilihan Opsi Jawaban
             Expanded(
               child: ListView.builder(
                 itemCount: currentQuestion.options.length,
@@ -219,7 +217,6 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ),
 
-            // Tombol Selanjutnya / Lihat Skor Akhir
             SizedBox(
               width: double.infinity,
               height: 50,
