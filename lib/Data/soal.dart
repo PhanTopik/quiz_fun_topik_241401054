@@ -1,26 +1,24 @@
 import '../Models/question_model.dart';
 
 class SoalData {
-  // List soal quiz bahasa flutter
   static final List<QuestionModel> flutterQuizQuestions = [
     QuestionModel(
       questionText: 'Apakah widget utama untuk membangun struktur dasar visual dalam Flutter?',
       options: ['Scaffold', 'Container', 'Column', 'SizedBox'],
-      correctOptionIndex: 0, // Scaffold
+      correctOptionIndex: 0,
     ),
     QuestionModel(
       questionText: 'Bahasa pemrograman apa yang digunakan oleh framework Flutter?',
       options: ['Python', 'Dart', 'Java', 'C++'],
-      correctOptionIndex: 1, // Dart
+      correctOptionIndex: 1,
     ),
     QuestionModel(
       questionText: 'Widget apa yang digunakan untuk membuat tampilan list yang dapat di-scroll secara efisien?',
       options: ['Column', 'Row', 'ListView.builder', 'Container'],
-      correctOptionIndex: 2, // ListView.builder
+      correctOptionIndex: 2,
     ),
   ];
 
-  // List pertanyaan soal UTS KPT
   static final List<QuestionModel> kptQuizQuestions = [
     QuestionModel(
       questionText: 'Apa singkatan dari KPT dalam konteks ilmu komputer?',
@@ -30,11 +28,10 @@ class SoalData {
         'Koneksi Protokol Telegram',
         'Kompilasi Perangkat Terpadu'
       ],
-      correctOptionIndex: 0, // Komputasi Paralel dan Terdistribusi
+      correctOptionIndex: 0,
     ),
   ];
 
-  /// Fungsi helper untuk mengambil daftar soal berdasarkan quizId
   static List<QuestionModel> getSoalByQuizId(String quizId) {
     switch (quizId) {
       case '1':

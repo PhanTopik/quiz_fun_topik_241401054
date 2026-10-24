@@ -37,16 +37,22 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: ListView.builder(
+      body: GridView.builder(
         padding: EdgeInsets.all(screenWidth * 0.04),
         itemCount: _quizList.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: screenWidth * 0.03,
+          mainAxisSpacing: screenWidth * 0.03,
+          childAspectRatio: 0.78,
+        ),
         itemBuilder: (context, index) {
           final quiz = _quizList[index];
           return QuizCardWidget(
             title: quiz.title,
             matakuliah: quiz.matakuliah,
             imagePath: quiz.imagePath,
-            progress: quiz.progress,
+            totalQuestions: quiz.totalQuestions,
             onTap: () {
               context.push(AppRoutes.quizDetail(quiz.id), extra: quiz);
             },

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../Data/quiz_list.dart';
 import '../Data/soal.dart';
 import '../Models/question_model.dart';
+import '../Models/quiz_history_model.dart';
+import '../Services/quiz_history_service.dart';
 import '../Widgets/app_scaffold.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -60,19 +64,41 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  int _calculateTotalScore() {
+  int _calculateCorrectCount() {
     int correctCount = 0;
     _userAnswers.forEach((index, selectedAnswer) {
       if (selectedAnswer == _questions[index].correctOptionIndex) {
         correctCount++;
       }
     });
-    return _questions.isEmpty ? 0 : ((correctCount / _questions.length) * 100).round();
+    return correctCount;
   }
 
-  void _showResultScreen() {
-    final int totalScore = _calculateTotalScore();
+  Future<void> _showResultScreen() async {
+    final int correctCount = _calculateCorrectCount();
+    final int totalScore = _questions.isNotEmpty
+        ? ((correctCount / _questions.length) * 100).toInt()
+        : 0;
+
     final textColor = Theme.of(context).colorScheme.onSurface;
+
+    final currentQuizCard = QuizData.initialQuizzes.firstWhere(
+          (q) => q.id == widget.quizId,
+      orElse: () => QuizData.initialQuizzes.first,
+    );
+
+    await QuizHistoryService.saveQuizHistory(
+      QuizHistoryModel(
+        quizTitle: widget.quizTitle,
+        matakuliah: currentQuizCard.matakuliah,
+        totalQuestions: _questions.length,
+        correctAnswers: correctCount,
+        score: totalScore,
+        date: DateTime.now(),
+      ),
+    );
+
+    if (!mounted) return;
 
     showDialog(
       context: context,
@@ -84,39 +110,21 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             const Icon(Icons.emoji_events, color: Colors.amber, size: 60),
             const SizedBox(height: 16),
-            Text(
-              'Total Skor Anda',
-              style: TextStyle(fontSize: 16, color: textColor.withValues(alpha: 0.7)),
-            ),
+            Text('Total Skor Anda', style: TextStyle(fontSize: 16, color: textColor.withValues(alpha: 0.7))),
             const SizedBox(height: 8),
-            Text(
-              '$totalScore',
-              style: const TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
+            Text('$totalScore / 100', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.green)),
             const SizedBox(height: 12),
-            Text(
-              'Anda berhasil menjawab benar dari total ${_questions.length} soal.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: textColor),
-            ),
+            Text('Benar $correctCount dari ${_questions.length} soal.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: textColor)),
           ],
         ),
         actions: [
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pop(context);
+                context.pop();
               },
               child: const Text('Selesai & Kembali'),
             ),

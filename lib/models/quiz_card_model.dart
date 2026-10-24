@@ -1,3 +1,5 @@
+import '../Data/soal.dart';
+
 class QuizCardModel {
   final String id;
   final String title;
@@ -12,4 +14,6 @@ class QuizCardModel {
     required this.imagePath,
     required this.progress,
   });
+
+  int get totalQuestions => SoalData.getSoalByQuizId(id).length;
 }

@@ -1,3 +1,5 @@
+import 'package:quiz_fun_topik/Data/soal.dart';
+
 import '../Models/quiz_card_model.dart';
 
 class QuizData {
@@ -5,16 +7,16 @@ class QuizData {
     QuizCardModel(
       id: '1',
       title: 'Bahasa Flutter',
-      matakuliah: 'Pemograman mobile',
-      imagePath: 'assets/images/flutter.jpg',
-      progress: 0.33,
+      matakuliah: 'Pemrograman Mobile',
+      imagePath: 'assets/images/flutter.png',
+      progress: 0.0,
     ),
     QuizCardModel(
       id: '2',
       title: 'Soal UTS KPT',
-      matakuliah: 'Komputasi paralel dan terdistribusi',
-      imagePath: 'assets/images/kpt.jpg',
-      progress: 0.75,
+      matakuliah: 'Komputasi Paralel & Terdistribusi',
+      imagePath: 'assets/images/kpt.png',
+      progress: 0.0,
     ),
   ];
 }

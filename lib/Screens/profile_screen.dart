@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AppScaffold(
       appBar: AppBar(
         title: Text(
-          "Profile",
+          "Profile Akun",
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w800,
@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Change Password',
               subtitle: 'Update your account password',
               onTap: () {
-                context.go(AppRoutes.forgotPassword);
+                context.push('${AppRoutes.forgotPassword}?from=profile');
               },
             ),
 
