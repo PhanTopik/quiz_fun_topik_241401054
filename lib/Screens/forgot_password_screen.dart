@@ -5,7 +5,11 @@ import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+  final String fromRoute;
+  const ForgotPasswordScreen({
+    super.key,
+    this.fromRoute = 'signin',
+  });
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -68,7 +72,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     await UserService.updatePassword(newPassword);
 
     if (mounted) {
-      _showSnackBar('Password berhasil diubah! Silakan Sign In.', Colors.green);
+      _showSnackBar('Password berhasil diubah!', Colors.green);
+      _navigateBack();
+    }
+  }
+
+  void _navigateBack() {
+    if (widget.fromRoute == 'profile') {
+      context.go(AppRoutes.profile);
+    } else {
       context.go(AppRoutes.signIn);
     }
   }
@@ -77,7 +89,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
@@ -89,6 +100,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _navigateBack,
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(screenWidth * 0.06),
@@ -118,7 +133,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             SizedBox(height: screenHeight * 0.05),
 
-            if (_currentStep == 1) ...[
+            if (_current_step_form(screenWidth, screenHeight)) ...[
+              // Input Email untuk vertifikasi
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -131,17 +147,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(height: screenHeight * 0.03),
               SizedBox(
                 width: double.infinity,
-                height: screenHeight * 0.07,
+                height: screenHeight * 0.065,
                 child: ElevatedButton(
                   onPressed: _verifyEmail,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.withValues(alpha: 0.8),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFF34A853),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                    ),
                   ),
-                  child: const Text('Verifikasi Email', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'Verifikasi Email',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.042,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ] else ...[
+              // Input Password Baru
               TextField(
                 controller: _newPasswordController,
                 obscureText: true,
@@ -152,6 +179,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: TextStyle(color: textColor),
               ),
               SizedBox(height: screenHeight * 0.02),
+              // konfirmasi password baru
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
@@ -164,20 +192,62 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(height: screenHeight * 0.03),
               SizedBox(
                 width: double.infinity,
-                height: screenHeight * 0.07,
+                height: screenHeight * 0.065,
                 child: ElevatedButton(
                   onPressed: _resetPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.withValues(alpha: 0.8),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color(0xFF34A853),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                    ),
                   ),
-                  child: const Text('Simpan Password Baru', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'Simpan Password Baru',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.042,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
+
+            SizedBox(height: screenHeight * 0.02),
+
+            // Tombol Kembali berwarna merah
+            SizedBox(
+              width: double.infinity,
+              height: screenHeight * 0.065,
+              child: ElevatedButton.icon(
+                onPressed: _navigateBack,
+                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                label: Text(
+                  'Kembali',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.042,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD34343),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  bool _current_step_form(double screenWidth, double screenHeight) {
+    return _currentStep == 1;
   }
 }

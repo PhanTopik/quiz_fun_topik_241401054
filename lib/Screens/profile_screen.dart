@@ -80,27 +80,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
               child: Column(
                 children: [
-                  Container(
-                    width: screenWidth * 0.25,
-                    height: screenWidth * 0.25,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: textColor.withValues(alpha: 0.3),
-                        width: 3,
-                      ),
-                    ),
+                  CircleAvatar(
+                    radius: screenWidth * 0.125,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: const AssetImage('assets/images/profile.jpg'),
+                    onBackgroundImageError: (exception, stackTrace) {
+                    },
                     child: ClipOval(
                       child: Image.asset(
                         'assets/images/profile.jpg',
                         fit: BoxFit.cover,
-                        width: screenWidth * 0.25,
-                        height: screenWidth * 0.25,
+                        width: double.infinity,
+                        height: double.infinity,
                         errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey,
-                            child: Icon(Icons.person, size: screenWidth * 0.12, color: Colors.white),
-                          );
+                          return Icon(Icons.person, size: screenWidth * 0.12, color: Colors.white);
                         },
                       ),
                     ),
@@ -195,12 +188,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icon(
                   Icons.logout,
                   size: screenWidth * 0.05,
+                  color: Colors.white,
                 ),
                 label: Text(
                   'Logout',
                   style: TextStyle(
                     fontSize: screenWidth * 0.045,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(

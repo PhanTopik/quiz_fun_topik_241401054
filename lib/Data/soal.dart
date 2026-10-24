@@ -33,4 +33,16 @@ class SoalData {
       correctOptionIndex: 0, // Komputasi Paralel dan Terdistribusi
     ),
   ];
+
+  /// Fungsi helper untuk mengambil daftar soal berdasarkan quizId
+  static List<QuestionModel> getSoalByQuizId(String quizId) {
+    switch (quizId) {
+      case '1':
+        return flutterQuizQuestions;
+      case '2':
+        return kptQuizQuestions;
+      default:
+        return [];
+    }
+  }
 }

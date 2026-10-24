@@ -4,22 +4,32 @@ import '../Models/question_model.dart';
 import '../Widgets/app_scaffold.dart';
 
 class QuizScreen extends StatefulWidget {
+  final String quizId;
   final String quizTitle;
 
-  const QuizScreen({super.key, required this.quizTitle});
+  const QuizScreen({
+    super.key,
+    required this.quizId,
+    required this.quizTitle,
+  });
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final List<QuestionModel> _questions = SoalData.flutterQuizQuestions;
+  late final List<QuestionModel> _questions;
 
   int _currentIndex = 0;
   int? _selectedAnswerIndex;
 
-  // Menyimpan daftar jawaban yang dipilih oleh pengguna untuk setiap nomor soal
   final Map<int, int> _userAnswers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _questions = SoalData.getSoalByQuizId(widget.quizId);
+  }
 
   void _answerQuestion(int selectedIndex) {
     setState(() {
@@ -37,7 +47,6 @@ class _QuizScreenState extends State<QuizScreen> {
         _selectedAnswerIndex = _userAnswers[_currentIndex];
       });
     } else {
-
       _showResultScreen();
     }
   }
@@ -58,7 +67,7 @@ class _QuizScreenState extends State<QuizScreen> {
         correctCount++;
       }
     });
-    return ((correctCount / _questions.length) * 100).round();
+    return _questions.isEmpty ? 0 : ((correctCount / _questions.length) * 100).round();
   }
 
   void _showResultScreen() {
@@ -121,11 +130,25 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final textColor = Theme.of(context).colorScheme.onSurface;
+    if (_questions.isEmpty) {
+      return AppScaffold(
+        appBar: AppBar(
+          title: Text(widget.quizTitle, style: TextStyle(color: textColor)),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: textColor),
+        ),
+        body: Center(
+          child: Text('Soal tidak ditemukan untuk kuis ini.', style: TextStyle(color: textColor)),
+        ),
+      );
+    }
+
     final currentQuestion = _questions[_currentIndex];
 
     return AppScaffold(
       appBar: AppBar(
-        title: Text(widget.quizTitle, style: TextStyle(color: textColor)),
+        title: Text(widget.quizTitle, style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),
@@ -188,7 +211,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ),
 
-            // Tombol selesai
+            // Tombol Selanjutnya / Lihat Skor Akhir
             SizedBox(
               width: double.infinity,
               height: 50,

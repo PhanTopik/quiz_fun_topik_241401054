@@ -6,14 +6,14 @@ class QuizData {
       id: '1',
       title: 'Bahasa Flutter',
       matakuliah: 'Pemograman mobile',
-      imagePath: 'assets/images/profile.jpg',
+      imagePath: 'assets/images/flutter.jpg',
       progress: 0.33,
     ),
     QuizCardModel(
       id: '2',
       title: 'Soal UTS KPT',
       matakuliah: 'Komputasi paralel dan terdistribusi',
-      imagePath: 'assets/images/profile.jpg',
+      imagePath: 'assets/images/kpt.jpg',
       progress: 0.75,
     ),
   ];

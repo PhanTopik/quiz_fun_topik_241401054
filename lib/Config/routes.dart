@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quiz_fun_topik/Widgets/mainNavBar.dart';
 
+import '../Models/quiz_card_model.dart';
 import '../Screens/signIn_screen.dart';
 import '../Screens/signUp_screen.dart';
 import '../Screens/forgot_password_screen.dart';
@@ -37,13 +38,19 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
-        builder: (context, state) => const ForgotPasswordScreen(),
+        builder: (context, state) {
+          final String from = state.uri.queryParameters['from'] ?? 'signin';
+          return ForgotPasswordScreen(fromRoute: from);
+        },
       ),
       GoRoute(
         path: '/quiz/:id',
         builder: (context, state) {
-          final quizId = state.pathParameters['id'] ?? '';
-          return QuizScreen(quizTitle: 'Kuis (ID: $quizId)');
+          final quiz = state.extra as QuizCardModel?;
+          return QuizScreen(
+            quizId: quiz?.id ?? '',
+            quizTitle: quiz?.title ?? 'Kuis',
+          );
         },
       ),
       StatefulShellRoute.indexedStack(

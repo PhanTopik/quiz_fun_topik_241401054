@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     return AppScaffold(
       appBar: AppBar(
         title: Text(
-          'Course Overview',
+          'Daftar Quiz',
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w800,
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
             imagePath: quiz.imagePath,
             progress: quiz.progress,
             onTap: () {
-              context.push(AppRoutes.quizDetail(quiz.id));
+              context.push(AppRoutes.quizDetail(quiz.id), extra: quiz);
             },
           );
         },
