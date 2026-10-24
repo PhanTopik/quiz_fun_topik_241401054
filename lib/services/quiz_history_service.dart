@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'; // Wajib diimport untuk ValueNotifier
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/quiz_history_model.dart';
 
@@ -13,8 +13,11 @@ class QuizHistoryService {
     final prefs = await SharedPreferences.getInstance();
     final List<String> existingList = prefs.getStringList(_keyHistory) ?? [];
 
+    // Tambahkan data kuis baru ke dalam list
     existingList.add(jsonEncode(history.toJson()));
+
     await prefs.setStringList(_keyHistory, existingList);
+
     historyChangeNotifier.value++;
   }
 

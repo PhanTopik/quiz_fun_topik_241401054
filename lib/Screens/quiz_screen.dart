@@ -5,6 +5,7 @@ import '../Data/soal.dart';
 import '../Models/question_model.dart';
 import '../Models/quiz_history_model.dart';
 import '../Services/quiz_history_service.dart';
+import '../services/quiz_session_service.dart';
 import '../Widgets/app_scaffold.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -26,19 +27,26 @@ class _QuizScreenState extends State<QuizScreen> {
 
   int _currentIndex = 0;
   int? _selectedAnswerIndex;
-
-  final Map<int, int> _userAnswers = {};
+  late Map<int, int> _userAnswers;
 
   @override
   void initState() {
     super.initState();
     _questions = SoalData.getSoalByQuizId(widget.quizId);
+
+    _userAnswers = Map.from(QuizSessionService.getSessionAnswers(widget.quizId));
+
+    if (_userAnswers.containsKey(_currentIndex)) {
+      _selectedAnswerIndex = _userAnswers[_currentIndex];
+    }
   }
 
   void _answerQuestion(int selectedIndex) {
     setState(() {
       _selectedAnswerIndex = selectedIndex;
       _userAnswers[_currentIndex] = selectedIndex;
+
+      QuizSessionService.saveSessionAnswers(widget.quizId, _userAnswers);
     });
   }
 
@@ -67,7 +75,7 @@ class _QuizScreenState extends State<QuizScreen> {
   int _calculateCorrectCount() {
     int correctCount = 0;
     _userAnswers.forEach((index, selectedAnswer) {
-      if (selectedAnswer == _questions[index].correctOptionIndex) {
+      if (index < _questions.length && selectedAnswer == _questions[index].correctOptionIndex) {
         correctCount++;
       }
     });
@@ -87,6 +95,7 @@ class _QuizScreenState extends State<QuizScreen> {
       orElse: () => QuizData.initialQuizzes.first,
     );
 
+    // Simpan ke history riwayat kuis
     await QuizHistoryService.saveQuizHistory(
       QuizHistoryModel(
         quizTitle: widget.quizTitle,
@@ -97,6 +106,9 @@ class _QuizScreenState extends State<QuizScreen> {
         date: DateTime.now(),
       ),
     );
+
+    // Hapus sesi kuis karena sudah selesai
+    QuizSessionService.clearSession(widget.quizId);
 
     if (!mounted) return;
 
@@ -138,6 +150,7 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final textColor = Theme.of(context).colorScheme.onSurface;
+
     if (_questions.isEmpty) {
       return AppScaffold(
         appBar: AppBar(
