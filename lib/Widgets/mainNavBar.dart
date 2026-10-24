@@ -89,7 +89,6 @@ class MainNavBar extends StatelessWidget {
     );
   }
 
-  // mainNavBar.dart
   Widget _buildNavItem(
       BuildContext context,
       int index,
@@ -132,8 +131,9 @@ class MainNavBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
+                fontFamily: 'Baloo2',
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
                 fontSize: screenWidth * 0.04,
               ),
             ),

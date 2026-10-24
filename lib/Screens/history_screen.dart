@@ -33,7 +33,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return AppScaffold(
       appBar: AppBar(
-        title: Text('Riwayat Kuis', style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Riwayat Kuis',
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w800,
+            fontSize: screenWidth * 0.06,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),

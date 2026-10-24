@@ -72,7 +72,9 @@ class ProfileSwitchButton extends StatelessWidget {
             subtitle: Text(
               subtitle,
               style: TextStyle(
-                fontSize: screenWidth * 0.032,
+                fontFamily: 'CrimsomPro',
+                fontSize: screenWidth * 0.035,
+                fontWeight: FontWeight.w200,
                 color: textColor.withValues(alpha: 0.6),
               ),
             ),

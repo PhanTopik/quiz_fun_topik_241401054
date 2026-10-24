@@ -85,8 +85,9 @@ class QuizCardWidget extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: screenWidth * 0.036,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               height: 1.2,
                             ),

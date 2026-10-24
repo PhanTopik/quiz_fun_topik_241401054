@@ -10,6 +10,13 @@ class AppTheme {
       surface: Colors.white,
       onSurface: Colors.black,
     ),
+    appBarTheme: const AppBarTheme(
+      titleTextStyle: TextStyle(
+        fontFamily: 'Dosis',
+        fontWeight: FontWeight.w800,
+        color: Colors.black,
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.black.withValues(alpha: 0.05),
@@ -34,6 +41,13 @@ class AppTheme {
       primary: Color(0xFF5CB733),
       surface: Color(0xFF121212),
       onSurface: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+      titleTextStyle: TextStyle(
+        fontFamily: 'Dosis',
+        fontWeight: FontWeight.w800,
+        color: Colors.white,
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
