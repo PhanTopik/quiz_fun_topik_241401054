@@ -105,7 +105,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     _userName,
                     style: TextStyle(
-                      fontFamily: 'Flix',
                       fontSize: screenWidth * 0.055,
                       fontWeight: FontWeight.normal,
                       color: textColor,
@@ -118,7 +117,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     _userEmail,
                     style: TextStyle(
-                      fontFamily: 'Baloo2',
                       fontSize: screenWidth * 0.038,
                       fontWeight: FontWeight.w500,
                       color: textColor.withValues(alpha: 0.7),

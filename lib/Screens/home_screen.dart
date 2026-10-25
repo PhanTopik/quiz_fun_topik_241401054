@@ -57,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
           'Daftar Quiz',
           style: TextStyle(
             color: textColor,
-            fontFamily: "Baloo2",
             fontWeight: FontWeight.w800,
             fontSize: screenWidth * 0.055,
           ),

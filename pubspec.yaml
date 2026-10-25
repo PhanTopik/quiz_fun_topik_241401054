@@ -64,19 +64,9 @@ flutter:
   fonts:
     - family: Baloo2
       fonts:
-        - asset: assets/fonts/Baloo2-Medium.ttf
-    - family: BarlowCondensed
-      fonts:
-        - asset: assets/fonts/BarlowCondensed-ExtraLight.otf
-    - family: CrimsonPro
-      fonts:
-        - asset: assets/fonts/CrimsonPro-VariableFont_wght.ttf
     - family: Flix
       fonts:
         - asset: assets/fonts/Flix-Regular.ttf
-    - family: Dosis
-      fonts:
-        - asset: assets/fonts/Dosis-ExtraBold.otf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

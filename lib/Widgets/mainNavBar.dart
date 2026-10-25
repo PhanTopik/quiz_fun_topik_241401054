@@ -131,7 +131,6 @@ class MainNavBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'Baloo2',
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
                 fontSize: screenWidth * 0.04,

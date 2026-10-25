@@ -70,7 +70,6 @@ class ProfileButton extends StatelessWidget {
             subtitle: Text(
               subtitle,
               style: TextStyle(
-                fontFamily: 'CrimsomPro',
                 fontSize: screenWidth * 0.035,
                 fontWeight: FontWeight.w200,
                 color: textColor.withValues(alpha: 0.6),
