@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Config/routes.dart';
+import '../Models/user_model.dart';
 import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
 
@@ -12,6 +13,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  // Controller untuk mengontrol teks yang dimasukkan pada form input nama, email, dan password
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -26,11 +28,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  // Fungsi asinkron untuk menangani proses registrasi pengguna baru
   Future<void> _registerUser() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
+    // Memeriksa apakah ada kolom input yang masih kosong
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Harap isi semua kolom!')),
@@ -38,19 +42,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    await UserService.saveUserData(
+    // Membuat instance UserModel dengan data input pengguna
+    final newUser = UserModel(
       name: name,
       email: email,
       password: password,
     );
 
+    // Menyimpan data registrasi menggunakan objek UserModel melalui UserService
+    await UserService.saveUserData(
+      name: newUser.name,
+      email: newUser.email,
+      password: newUser.password,
+    );
+
+    // Memeriksa apakah widget masih aktif (mounted) sebelum melakukan navigasi router
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registrasi berhasil! Silakan Sign In'),
-          backgroundColor: Colors.green,
-        ),
-      );
       context.go(AppRoutes.signIn);
     }
   }
@@ -100,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Kotak input nama
+                      // Kotak input untuk Nama Lengkap
                       TextField(
                         controller: _nameController,
                         decoration: InputDecoration(
@@ -112,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Kotak input email
+                      // Kotak input untuk Email
                       TextField(
                         controller: _emailController,
                         decoration: InputDecoration(
@@ -125,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Kotak input password
+                      // Kotak input untuk password
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
@@ -140,6 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               color: textColor,
                             ),
                             onPressed: () {
+                              // Mengubah status visibilitas teks password saat ikon diklik
                               setState(() {
                                 _obscurePassword = !_obscurePassword;
                               });
@@ -151,7 +159,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Tombol Sign Up
+                      // Tombol utama Sign Up
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -177,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Sign in link
+                      // Tautan teks untuk beralih ke halaman Sign In jika sudah punya akun
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -44,5 +44,3 @@ Link Prototype Aplikasi:
 
 https://www.figma.com/design/kVQXLDKIc8TuU9rd9soQiU/Mockup-fun-quiz-topik?node-id=0-1&t=sKw5BnFCRCRJjwqe-1
 
-Link Presentasi Youtube:
-
