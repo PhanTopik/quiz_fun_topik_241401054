@@ -5,8 +5,9 @@ import '../Data/soal.dart';
 import '../Models/question_model.dart';
 import '../Models/quiz_history_model.dart';
 import '../Services/quiz_history_service.dart';
-import '../services/quiz_session_service.dart';
+import '../Services/quiz_session_service.dart';
 import '../Widgets/app_scaffold.dart';
+import '../Widgets/quiz_option.dart';
 
 class QuizScreen extends StatefulWidget {
   final String quizId;
@@ -95,7 +96,6 @@ class _QuizScreenState extends State<QuizScreen> {
       orElse: () => QuizData.initialQuizzes.first,
     );
 
-    // Simpan ke history riwayat kuis
     await QuizHistoryService.saveQuizHistory(
       QuizHistoryModel(
         quizTitle: widget.quizTitle,
@@ -107,7 +107,6 @@ class _QuizScreenState extends State<QuizScreen> {
       ),
     );
 
-    // Hapus sesi kuis karena sudah selesai
     QuizSessionService.clearSession(widget.quizId);
 
     if (!mounted) return;
@@ -206,25 +205,13 @@ class _QuizScreenState extends State<QuizScreen> {
               child: ListView.builder(
                 itemCount: currentQuestion.options.length,
                 itemBuilder: (context, index) {
-                  final isSelected = _selectedAnswerIndex == index;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: isSelected ? Colors.green : Colors.grey.shade400,
-                        width: isSelected ? 2 : 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: isSelected ? Colors.green.withValues(alpha: 0.1) : Colors.transparent,
-                    ),
-                    child: RadioListTile<int>(
-                      title: Text(currentQuestion.options[index], style: TextStyle(color: textColor)),
-                      value: index,
-                      groupValue: _selectedAnswerIndex,
-                      onChanged: (value) {
-                        if (value != null) _answerQuestion(value);
-                      },
-                    ),
+                  return QuizOption(
+                    optionText: currentQuestion.options[index],
+                    index: index,
+                    selectedAnswerIndex: _selectedAnswerIndex,
+                    onChanged: (value) {
+                      if (value != null) _answerQuestion(value);
+                    },
                   );
                 },
               ),
