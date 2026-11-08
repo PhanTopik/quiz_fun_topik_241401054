@@ -20,12 +20,14 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    // untuk memperbarui data secara otomatis saat ada perubahan riwayat
     QuizHistoryService.historyChangeNotifier.addListener(_loadHistory);
     _loadHistory();
   }
 
   @override
   void dispose() {
+    // Membersihkan listener dan observer untuk mencegah kebocoran memori
     QuizHistoryService.historyChangeNotifier.removeListener(_loadHistory);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -35,18 +37,18 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    // Membersihkan riwayat kuis saat aplikasi dijeda atau ditutup
+    // Membersihkan riwayat kuis secara otomatis saat aplikasi dijeda (paused) atau ditutup (detached)
     if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
       _clearHistoryData();
     }
   }
 
-  // Fungsi asinkron untuk menghapus data riwayat kuis
+  // Fungsi untuk menghapus data riwayat kuis melalui layanan
   Future<void> _clearHistoryData() async {
     await QuizHistoryService.clearHistory();
   }
 
-  // Fungsi asinkron untuk memuat daftar riwayat kuis dari penyimpanan lokal
+  // Fungsi untuk memuat daftar riwayat kuis terbaru dari penyimpanan lokal
   Future<void> _loadHistory() async {
     if (!mounted) return;
     setState(() {
@@ -82,10 +84,10 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
         iconTheme: IconThemeData(color: textColor),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) // Menampilkan indikator loading jika data sedang dimuat
+          ? const Center(child: CircularProgressIndicator())
           : _histories.isEmpty
           ? Center(
-        // Tampilan jika data riwayat masih kosong
+        // Tampilan pesan kosong jika belum ada riwayat kuis yang tersimpan
         child: Text(
           'Belum ada riwayat kuis yang dikerjakan.',
           style: TextStyle(
@@ -94,7 +96,7 @@ class _HistoryScreenState extends State<HistoryScreen> with WidgetsBindingObserv
           ),
         ),
       )
-      // Menampilkan daftar riwayat menggunakan ListView.builder
+      // Menampilkan daftar riwayat kuis
           : ListView.builder(
         padding: EdgeInsets.all(screenWidth * 0.04),
         itemCount: _histories.length,

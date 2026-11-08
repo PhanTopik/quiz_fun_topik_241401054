@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
+  // Mempertahankan status state layar saat berpindah tab di navigasi bawah
   @override
   bool get wantKeepAlive => true;
 
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   @override
   void initState() {
     super.initState();
+    // Menginisialisasi daftar kuis awal saat pertama kali dibuka
     _filteredQuizList = QuizData.initialQuizzes;
   }
 
@@ -32,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     super.dispose();
   }
 
+  // Fungsi untuk memfilter daftar kuis berdasarkan teks pencarian judul
   void _filterQuizzes(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -49,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     super.build(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
@@ -66,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
       ),
       body: Column(
         children: [
-          // Widget Search Bar
+          // Kolom Search Bar untuk mencari judul kuis
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.04,
@@ -105,9 +109,11 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
             ),
           ),
 
+          // daftar kuis
           Expanded(
             child: _filteredQuizList.isEmpty
                 ? Center(
+              // Tampilan jika kuis yang dicari tidak ditemukan
               child: Text(
                 'Kuiz tidak ditemukan',
                 style: TextStyle(
@@ -133,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                   imagePath: quiz.imagePath,
                   totalQuestions: quiz.totalQuestions,
                   onTap: () {
+                    // Navigasi ke halaman quiz_screen berdasarkan idquiz
                     context.push(AppRoutes.quizDetail(quiz.id), extra: quiz);
                   },
                 );

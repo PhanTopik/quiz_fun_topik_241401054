@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../Config/routes.dart';
 import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
+import '../utils/snackbar_utils.dart';
+import '../utils/validator_utils.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -12,6 +14,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  // Controller untuk mengelola input email dan password
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -24,16 +27,27 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  // Fungsi untuk memvalidasi input dan memproses autentikasi login pengguna
   Future<void> _loginUser() async {
     final inputEmail = _emailController.text.trim();
-    final inputPassword = _passwordController.text.trim();
+    final inputPassword = _passwordController.text;
 
-    if (inputEmail.isEmpty || inputPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('mohon masukan Email dan Password terlebih dahulu!'),
-          backgroundColor: Colors.red,
-        ),
+    // Memvalidasi apakah kolom input kosong
+    if (!ValidatorUtils.isNotEmpty(inputEmail) || !ValidatorUtils.isNotEmpty(inputPassword)) {
+      SnackbarUtils.showSnackBar(
+        context: context,
+        message: 'Mohon masukkan Email dan Password terlebih dahulu!',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
+    // Memvalidasi format penulisan email
+    if (!ValidatorUtils.isValidEmail(inputEmail)) {
+      SnackbarUtils.showSnackBar(
+        context: context,
+        message: 'Format email tidak valid!',
+        backgroundColor: Colors.red,
       );
       return;
     }
@@ -41,29 +55,29 @@ class _SignInScreenState extends State<SignInScreen> {
     final savedEmail = await UserService.getSavedEmail();
     final savedPassword = await UserService.getSavedPassword();
 
+    // Memeriksa apakah akun terdaftar
     if (savedEmail == null || savedPassword == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Akun anda tidak terdaftar'),
-            backgroundColor: Colors.red,
-          ),
+        SnackbarUtils.showSnackBar(
+          context: context,
+          message: 'Akun anda tidak terdaftar',
+          backgroundColor: Colors.red,
         );
       }
       return;
     }
 
+    // Mencocokkan input pengguna dengan data yang tersimpan
     if (inputEmail == savedEmail && inputPassword == savedPassword) {
       if (mounted) {
         context.go(AppRoutes.home);
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email atau Password salah!'),
-            backgroundColor: Colors.red,
-          ),
+        SnackbarUtils.showSnackBar(
+          context: context,
+          message: 'Email atau Password salah!',
+          backgroundColor: Colors.red,
         );
       }
     }
@@ -81,6 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
         builder: (context, constraints) {
           final isLargeScreen = constraints.maxWidth > 600;
           final maxWidth = isLargeScreen ? 400.0 : constraints.maxWidth;
+
           return SingleChildScrollView(
             child: Center(
               child: Container(
@@ -91,6 +106,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     SizedBox(height: screenHeight * 0.1),
 
+                    // Judul
                     Text(
                       'Selamat Datang Kembali!',
                       style: TextStyle(
@@ -103,6 +119,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.01),
 
+                    // Subjudul
                     Text(
                       'Sign in akun anda',
                       style: TextStyle(
@@ -115,7 +132,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.05),
 
-                    // Kotak input email
+                    // Kotak Input Email
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
@@ -139,7 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.02),
 
-                    // Kotak input password
+                    // Kotak Input Password
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -177,7 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.01),
 
-                    // Forgot Password link
+                    // Tautan halamab lupa Kata Sandi (Forgot Password)
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -222,7 +239,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     SizedBox(height: screenHeight * 0.03),
 
-                    // Sign up link
+                    // Tautan Navigasi ke sign up
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

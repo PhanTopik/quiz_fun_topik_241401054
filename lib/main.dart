@@ -1,8 +1,8 @@
-import 'package:quiz_fun_topik/Config/routes.dart';
-import 'package:quiz_fun_topik/Config/app_theme.dart';
-import 'package:quiz_fun_topik/Services/theme_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../Config/routes.dart';
+import '../Config/app_theme.dart';
+import '../Services/theme_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

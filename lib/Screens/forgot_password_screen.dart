@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../Config/routes.dart';
 import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
+import '../utils/snackbar_utils.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String fromRoute;
@@ -16,6 +17,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  // Controller untuk mengelola input teks email dan password baru
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
@@ -30,53 +32,54 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _showSnackBar(String message, Color color) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color),
-    );
-  }
-
+  // Fungsi untuk memvalidasi apakah email yang dimasukkan terdaftar
   Future<void> _verifyEmail() async {
     final inputEmail = _emailController.text.trim();
     if (inputEmail.isEmpty) {
-      _showSnackBar('Harap masukkan email Anda!', Colors.red);
+      SnackbarUtils.showSnackBar(context: context, message: 'Harap masukkan email Anda!', backgroundColor: Colors.red);
       return;
     }
 
     final savedEmail = await UserService.getSavedEmail();
+
+    if (!mounted) return;
+
     if (savedEmail == null || inputEmail != savedEmail) {
-      _showSnackBar('Email tidak terdaftar!', Colors.red);
+      SnackbarUtils.showSnackBar(context: context, message: 'Email tidak terdaftar!', backgroundColor: Colors.red);
       return;
     }
 
+    // Jika valid, lanjutkan ke langkah kedua
     setState(() {
       _currentStep = 2;
     });
   }
 
+  // Fungsi untuk memvalidasi dan menyimpan password baru pengguna
   Future<void> _resetPassword() async {
     final newPassword = _newPasswordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
     if (newPassword.isEmpty || confirmPassword.isEmpty) {
-      _showSnackBar('Harap masukkan password baru!', Colors.red);
+      SnackbarUtils.showSnackBar(context: context, message: 'Harap masukkan password baru!', backgroundColor: Colors.red);
       return;
     }
 
     if (newPassword != confirmPassword) {
-      _showSnackBar('Konfirmasi password tidak cocok!', Colors.red);
+      SnackbarUtils.showSnackBar(context: context, message: 'Konfirmasi password tidak cocok!', backgroundColor: Colors.red);
       return;
     }
 
+    // Memperbarui password melalui user service
     await UserService.updatePassword(newPassword);
 
-    if (mounted) {
-      _showSnackBar('Password berhasil diubah!', Colors.green);
-      _navigateBack();
-    }
+    if (!mounted) return;
+
+    SnackbarUtils.showSnackBar(context: context, message: 'Password berhasil diubah!', backgroundColor: Colors.green);
+    _navigateBack();
   }
 
+  // Fungsi untuk menangani navigasi kembali berdasarkan dari rute mana halaman
   void _navigateBack() {
     if (widget.fromRoute == 'profile') {
       context.go(AppRoutes.profile);
@@ -111,6 +114,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: screenHeight * 0.04),
+            // Judul langkah 1 dan langkah 2
             Text(
               _currentStep == 1 ? 'Cari Akun Anda' : 'Buat Password Baru',
               style: TextStyle(
@@ -121,6 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: screenHeight * 0.01),
+            // Subjudul instruksi langkah 1 dan langkah 2
             Text(
               _currentStep == 1
                   ? 'Masukkan email terdaftar untuk melanjutkan pemulihan password.'
@@ -133,8 +138,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             SizedBox(height: screenHeight * 0.05),
 
-            if (_current_step_form(screenWidth, screenHeight)) ...[
-              // Input Email untuk vertifikasi
+            if (_currentStepForm()) ...[
+              // Langkah 1: Input Email untuk verifikasi
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -168,7 +173,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
             ] else ...[
-              // Input Password Baru
+              // Langkah 2: Input Password Baru & Konfirmasi
               TextField(
                 controller: _newPasswordController,
                 obscureText: true,
@@ -179,7 +184,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: TextStyle(color: textColor),
               ),
               SizedBox(height: screenHeight * 0.02),
-              // konfirmasi password baru
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
@@ -247,7 +251,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  bool _current_step_form(double screenWidth, double screenHeight) {
+  // Fungsi helper untuk memeriksa apakah sedang berada di langkah pertama
+  bool _currentStepForm() {
     return _currentStep == 1;
   }
 }

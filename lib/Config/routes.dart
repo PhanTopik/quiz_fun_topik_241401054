@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quiz_fun_topik/Widgets/mainNavBar.dart';
 
+import '../Widgets/main_nav_bar.dart';
 import '../Models/quiz_card_model.dart';
-import '../Screens/signIn_screen.dart';
-import '../Screens/signUp_screen.dart';
+import '../Screens/sign_in_screen.dart';
+import '../Screens/sign_up_screen.dart';
 import '../Screens/forgot_password_screen.dart';
 import '../Screens/home_screen.dart';
 import '../Screens/history_screen.dart';

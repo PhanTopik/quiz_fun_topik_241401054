@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'gradient_background.dart';
 
 class AppScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
@@ -13,12 +12,10 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: appBar,
-        body: body,
-      ),
+    // Warna latar belakang otomatis mengikuti tema global
+    return Scaffold(
+      appBar: appBar,
+      body: body,
     );
   }
 }

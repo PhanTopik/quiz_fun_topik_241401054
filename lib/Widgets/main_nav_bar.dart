@@ -1,15 +1,17 @@
-import 'package:quiz_fun_topik/Config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../Config/routes.dart';
 
+// Widget Navigation Bar Utama bawah menggunakan StatefulNavigationShell untuk multi-branch routing
 class MainNavBar extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   const MainNavBar({
     super.key,
-    required this.navigationShell
+    required this.navigationShell,
   });
 
+  // Fungsi untuk menangani perpindahan antar branch/tab navigasi
   void _onItemTapped(BuildContext context, int index) {
     navigationShell.goBranch(
       index,
@@ -23,6 +25,7 @@ class MainNavBar extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final currentIndex = navigationShell.currentIndex;
 
+    // PopScope untuk mengatur aksi tombol kembali
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -30,9 +33,11 @@ class MainNavBar extends StatelessWidget {
 
         final String currentLocation = GoRouterState.of(context).uri.path;
 
+        // Jika berada di halaman home, keluar dari aplikasi atau halaman utama
         if (currentLocation == AppRoutes.home) {
           Navigator.of(context).pop();
         } else {
+          // Jika tidak di home, kembali ke halaman sebelumnya atau arahkan ke home
           if (GoRouter.of(context).canPop()) {
             GoRouter.of(context).pop();
           } else {
@@ -45,6 +50,7 @@ class MainNavBar extends StatelessWidget {
         child: Scaffold(
           body: navigationShell,
           extendBody: true,
+          // Bilah navigasi bawah
           bottomNavigationBar: Container(
             margin: EdgeInsets.zero,
             padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
@@ -100,6 +106,7 @@ class MainNavBar extends StatelessWidget {
       ) {
     final isActive = index == currentIndex;
 
+    // menampilkan ikon beserta teks label saat dipilih
     return isActive
         ? GestureDetector(
       onTap: () => _onItemTapped(context, index),
@@ -109,15 +116,15 @@ class MainNavBar extends StatelessWidget {
           horizontal: screenWidth * 0.045,
         ),
         decoration: BoxDecoration(
-            color: const Color(0x487C46),
-            borderRadius: BorderRadius.circular(screenWidth * 0.06),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: screenWidth * 0.02,
-                offset: Offset(0, screenHeight * 0.005),
-              ),
-            ]
+          color: const Color(0xFF487C46),
+          borderRadius: BorderRadius.circular(screenWidth * 0.06),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: screenWidth * 0.02,
+              offset: Offset(0, screenHeight * 0.005),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -140,6 +147,7 @@ class MainNavBar extends StatelessWidget {
         ),
       ),
     )
+    // hanya menampilkan ikon saja saat tidak dipilih
         : GestureDetector(
       onTap: () => _onItemTapped(context, index),
       child: Padding(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../Services/theme_service.dart';
 
 class ProfileButton extends StatelessWidget {
   final IconData icon;
@@ -19,75 +18,75 @@ class ProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final textColor = Theme.of(context).colorScheme.onSurface;
 
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeService.themeNotifier,
-      builder: (context, currentThemeMode, child) {
-        final platformBrightness = MediaQuery.platformBrightnessOf(context);
-        final isDarkMode = currentThemeMode == ThemeMode.dark ||
-            (currentThemeMode == ThemeMode.system && platformBrightness == Brightness.dark);
+    // untuk mengambil tema aktif
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final textColor = theme.colorScheme.onSurface;
 
-        final containerBg = isDarkMode
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.black.withValues(alpha: 0.03);
+    // Menentukan warna latar belakang dan border berdasarkan tema
+    final containerBg = isDarkMode
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.03);
 
-        final borderColor = isDarkMode
-            ? Colors.white.withValues(alpha: 0.15)
-            : Colors.black.withValues(alpha: 0.08);
+    final borderColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.15)
+        : Colors.black.withValues(alpha: 0.08);
 
-        return Container(
-          margin: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+      decoration: BoxDecoration(
+        color: containerBg,
+        borderRadius: BorderRadius.circular(screenWidth * 0.035),
+        border: Border.all(
+          color: borderColor,
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        // Icon
+        leading: Container(
+          padding: EdgeInsets.all(screenWidth * 0.025),
           decoration: BoxDecoration(
-            color: containerBg,
-            borderRadius: BorderRadius.circular(screenWidth * 0.035),
-            border: Border.all(
-              color: borderColor,
-              width: 1,
-            ),
+            color: Colors.blue.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(screenWidth * 0.02),
           ),
-          child: ListTile(
-            leading: Container(
-              padding: EdgeInsets.all(screenWidth * 0.025),
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(screenWidth * 0.02),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.blue,
-                size: screenWidth * 0.05,
-              ),
-            ),
-            title: Text(
-              title,
-              style: TextStyle(
-                fontSize: screenWidth * 0.04,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            subtitle: Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: screenWidth * 0.035,
-                fontWeight: FontWeight.w200,
-                color: textColor.withValues(alpha: 0.6),
-              ),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              color: textColor.withValues(alpha: 0.5),
-              size: screenWidth * 0.04,
-            ),
-            onTap: onTap,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.04,
-              vertical: screenHeight * 0.005,
-            ),
+          child: Icon(
+            icon,
+            color: Colors.blue,
+            size: screenWidth * 0.05,
           ),
-        );
-      },
+        ),
+        // Judul utama menu
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: screenWidth * 0.04,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
+        ),
+        // Subjudul keterangan menu
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: screenWidth * 0.035,
+            fontWeight: FontWeight.w200,
+            color: textColor.withValues(alpha: 0.6),
+          ),
+        ),
+        // Icon panah di sebelah kanan
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: textColor.withValues(alpha: 0.5),
+          size: screenWidth * 0.04,
+        ),
+        onTap: onTap,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.04,
+          vertical: screenHeight * 0.005,
+        ),
+      ),
     );
   }
 }

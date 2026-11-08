@@ -4,6 +4,8 @@ import '../Config/routes.dart';
 import '../Models/user_model.dart';
 import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
+import '../utils/snackbar_utils.dart';
+import '../utils/validator_utils.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -13,7 +15,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  // Controller untuk mengontrol teks yang dimasukkan pada form input nama, email, dan password
+  // Controller untuk mengelola input teks nama, email, dan password
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -28,43 +30,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  // Fungsi asinkron untuk menangani proses registrasi pengguna baru
+  // Fungsi untuk memvalidasi input dan memproses pendaftaran pengguna baru
   Future<void> _registerUser() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     // Memeriksa apakah ada kolom input yang masih kosong
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harap isi semua kolom!')),
+    if (!ValidatorUtils.isNotEmpty(name) ||
+        !ValidatorUtils.isNotEmpty(email) ||
+        !ValidatorUtils.isNotEmpty(password)) {
+      SnackbarUtils.showSnackBar(
+        context: context,
+        message: 'Harap isi semua kolom!',
+        backgroundColor: Colors.red,
       );
       return;
     }
 
-    // Membuat instance UserModel dengan data input pengguna
+    // Memvalidasi format penulisan email
+    if (!ValidatorUtils.isValidEmail(email)) {
+      SnackbarUtils.showSnackBar(
+        context: context,
+        message: 'Format email tidak valid!',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
+    // Membuat objek model data pengguna baru
     final newUser = UserModel(
       name: name,
       email: email,
       password: password,
     );
 
-    // Menyimpan data registrasi menggunakan objek UserModel melalui UserService
+    // Menyimpan data pengguna
     await UserService.saveUserData(
       name: newUser.name,
       email: newUser.email,
       password: newUser.password,
     );
 
-    // Memeriksa apakah widget masih aktif (mounted) sebelum melakukan navigasi router
     if (mounted) {
-      context.go(AppRoutes.signIn);
+      SnackbarUtils.showSnackBar(
+        context: context,
+        message: 'Registrasi berhasil! Silakan masuk.',
+        backgroundColor: Colors.green,
+      );
+      context.go(AppRoutes.home);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
@@ -83,6 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // Judul
                       Text(
                         'Daftar Akun Anda!',
                         style: TextStyle(
@@ -95,6 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 8),
 
+                      // Subjudul
                       Text(
                         'Daftar dan Isi informasi Anda',
                         style: TextStyle(
@@ -107,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Kotak input untuk Nama Lengkap
+                      // Kotak Input Nama Lengkap
                       TextField(
                         controller: _nameController,
                         decoration: InputDecoration(
@@ -119,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Kotak input untuk Email
+                      // Kotak Input email
                       TextField(
                         controller: _emailController,
                         decoration: InputDecoration(
@@ -132,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Kotak input untuk password
+                      // Kotak Input password
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
@@ -147,7 +170,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               color: textColor,
                             ),
                             onPressed: () {
-                              // Mengubah status visibilitas teks password saat ikon diklik
                               setState(() {
                                 _obscurePassword = !_obscurePassword;
                               });
@@ -159,7 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Tombol utama Sign Up
+                      // Tombol sign up
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -185,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Tautan teks untuk beralih ke halaman Sign In jika sudah punya akun
+                      // Tautan Navigasi kembali ke halaman Sign In jika sudah memiliki akun
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Config/routes.dart';
+import '../Services/theme_service.dart';
+import '../Services/user_service.dart';
 import '../Widgets/app_scaffold.dart';
+import '../Widgets/ganti_nama_dialog.dart';
 import '../Widgets/profile_button.dart';
 import '../Widgets/profile_switch_button.dart';
-import '../Widgets/ganti_nama_dialog.dart';
-import '../Services/user_service.dart';
-import '../Services/theme_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,6 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     final name = await UserService.getName();
     final email = await UserService.getEmail();
+
+    if (!mounted) return;
     setState(() {
       _userName = name;
       _userEmail = email;
@@ -50,8 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return AppScaffold(
@@ -74,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             SizedBox(height: screenHeight * 0.02),
 
-            // Profile Header
+            // Foto Avatar, Nama, dan Email Pengguna
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
@@ -84,8 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     radius: screenWidth * 0.125,
                     backgroundColor: Colors.grey,
                     backgroundImage: const AssetImage('assets/images/profile.jpg'),
-                    onBackgroundImageError: (exception, stackTrace) {
-                    },
+                    onBackgroundImageError: (exception, stackTrace) {},
                     child: ClipOval(
                       child: Image.asset(
                         'assets/images/profile.jpg',
@@ -101,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   SizedBox(height: screenHeight * 0.02),
 
-                  // Nama akun
+                  // Teks Nama Akun
                   Text(
                     _userName,
                     style: TextStyle(
@@ -113,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   SizedBox(height: screenHeight * 0.005),
 
-                  // Email akun
+                  // Teks Email Akun
                   Text(
                     _userEmail,
                     style: TextStyle(
@@ -128,6 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: screenHeight * 0.04),
 
+            // teks account settings
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -141,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: screenHeight * 0.015),
 
-            // tombol Ganti nama akun
+            // Tombol Menu: Ganti nama akun
             ProfileButton(
               icon: Icons.person_outline,
               title: 'Ganti nama',
@@ -151,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: screenHeight * 0.01),
 
-            // tombol Ganti password akun
+            // Tombol Menu: Ganti password akun
             ProfileButton(
               icon: Icons.lock_outline,
               title: 'Change Password',
@@ -163,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: screenHeight * 0.01),
 
-            // Fitur Dark/Light Mode
+            // Tombol Pengalihan Mode (Dark / Light Mode)
             ProfileSwitchButton(
               icon: Icons.brightness_6_outlined,
               title: 'Mode Gelap',
@@ -178,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: screenHeight * 0.03),
 
-            // Logout akun
+            // Tombol Keluar Akun
             Container(
               width: double.infinity,
               margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),

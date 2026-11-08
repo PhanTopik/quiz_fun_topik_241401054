@@ -33,8 +33,10 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   void initState() {
     super.initState();
+    // Memuat daftar soal berdasarkan ID kuis
     _questions = SoalData.getSoalByQuizId(widget.quizId);
 
+    // Memulihkan sesi jawaban pengguna yang tersimpan sebelumnya jika ada
     _userAnswers = Map.from(QuizSessionService.getSessionAnswers(widget.quizId));
 
     if (_userAnswers.containsKey(_currentIndex)) {
@@ -42,15 +44,18 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  // Fungsi untuk menyimpan pilihan jawaban pengguna pada soal aktif
   void _answerQuestion(int selectedIndex) {
     setState(() {
       _selectedAnswerIndex = selectedIndex;
       _userAnswers[_currentIndex] = selectedIndex;
 
+      // Menyimpan progres jawaban ke sesi lokal secara real-time
       QuizSessionService.saveSessionAnswers(widget.quizId, _userAnswers);
     });
   }
 
+  // Fungsi untuk berpindah ke soal berikutnya atau menampilkan hasil jika sudah soal terakhir
   void _nextQuestion() {
     if (_selectedAnswerIndex == null) return;
 
@@ -64,6 +69,7 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  // Fungsi untuk kembali ke soal sebelumnya
   void _previousQuestion() {
     if (_currentIndex > 0) {
       setState(() {
@@ -73,6 +79,7 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  // Menghitung total jawaban yang benar
   int _calculateCorrectCount() {
     int correctCount = 0;
     _userAnswers.forEach((index, selectedAnswer) {
@@ -83,6 +90,7 @@ class _QuizScreenState extends State<QuizScreen> {
     return correctCount;
   }
 
+  // Menampilkan dialog hasil akhir, menyimpan riwayat, dan menghapus sesi kuis
   Future<void> _showResultScreen() async {
     final int correctCount = _calculateCorrectCount();
     final int totalScore = _questions.isNotEmpty
@@ -96,6 +104,7 @@ class _QuizScreenState extends State<QuizScreen> {
       orElse: () => QuizData.initialQuizzes.first,
     );
 
+    // Menyimpan riwayat pengerjaan kuis
     await QuizHistoryService.saveQuizHistory(
       QuizHistoryModel(
         quizTitle: widget.quizTitle,
@@ -107,10 +116,12 @@ class _QuizScreenState extends State<QuizScreen> {
       ),
     );
 
+    // Menghapus sesi kuis yang sedang aktif karena sudah selesai
     QuizSessionService.clearSession(widget.quizId);
 
     if (!mounted) return;
 
+    // Menampilkan skor akhir
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -150,20 +161,6 @@ class _QuizScreenState extends State<QuizScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final textColor = Theme.of(context).colorScheme.onSurface;
 
-    if (_questions.isEmpty) {
-      return AppScaffold(
-        appBar: AppBar(
-          title: Text(widget.quizTitle, style: TextStyle(color: textColor)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme: IconThemeData(color: textColor),
-        ),
-        body: Center(
-          child: Text('Soal tidak ditemukan untuk kuis ini.', style: TextStyle(color: textColor)),
-        ),
-      );
-    }
-
     final currentQuestion = _questions[_currentIndex];
 
     return AppScaffold(
@@ -178,6 +175,7 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // nomor soal dan tombol kembali ke soal sebelumnya
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -195,12 +193,14 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
             const SizedBox(height: 12),
 
+            // Teks Pertanyaan
             Text(
               currentQuestion.questionText,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
             ),
             const SizedBox(height: 24),
 
+            // Daftar Opsi Jawaban
             Expanded(
               child: ListView.builder(
                 itemCount: currentQuestion.options.length,
@@ -217,6 +217,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ),
 
+            // Tombol Selanjutnya / Lihat Skor Akhir
             SizedBox(
               width: double.infinity,
               height: 50,
